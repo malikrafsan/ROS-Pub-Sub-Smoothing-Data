@@ -51,8 +51,8 @@ The details of each node are as follows:
 2. Fork this repository into your GitLab group.
 3. Create a `development` branch in the forked repository.
 4. Create a folder with your TPB NIM as the folder name.
-5. Copy the `src` folder from the workspace into your TPB NIM folder (**do not commit the `build` and `devel` folders**).
-6. Create a README inside your TPB NIM folder to explain your work and how to run it.
+5. Copy the `src` folder from the ROS workspace into your TPB NIM folder (**do not commit the `build` and `devel` folders**).
+6. Create a README.md inside your TPB NIM folder to explain your work and how to run it.
 6. Submit your work after the due date by creating a merge request (MR) to [this repository's master branch](https://gitlab.com/dagozilla/academy/2021-internship2/assignment/day-1-bonus).
 7. Cite references you used in this assignment.
 
