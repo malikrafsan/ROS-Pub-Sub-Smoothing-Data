@@ -51,7 +51,7 @@ The details of each node are as follows:
 2. Create a `development` branch in the forked repository.
 3. Create a folder with your TPB NIM as the folder name. Make this folder your ROS workspace (i.e. your ROS workspace will be named 16520xxx).
 4. Implement your solution in this workspace.
-5. Commit your work (only commit the `src` folder in your workspace. *Do not commit `build` and `devel` folders*).
+5. Commit your work (only commit the `src` folder in your workspace. **Do not commit `build` and `devel` folders**).
 6. Create a README.md inside your workspace to explain your work and how to run it.
 7. Submit your work after the due date by creating a merge request (MR) to [this repository's master branch](https://gitlab.com/dagozilla/academy/2021-internship2/assignment/day-1-bonus).
 8. Cite references you used in this assignment.
