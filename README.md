@@ -35,16 +35,20 @@ The details of each node are as follows:
 
 ### Sensor Driver Node
 - Publishes message of type float64 to `/sensor_measurement` topic.
-  - Message content is a random floating point number that represents a sensor measurement *z_i*.
-- Node loop frequency is 50Hz.
+  - Message content is sensor measurement *z_i*.
+  - Value of *z_i* is given by the formula: `z_i = sin(i * pi / 180) + g`, where `g` is a random number with Gaussian distribution of mean=0.0 and sigma=0.05.
+- Node loop frequency is 100Hz.
 - Implementation in Python.
 
 ### Filter Node
 - Subscribes to `/sensor_measurement` topic.
 - Publishes message of type float64 to `/sensor_measurement/filtered` topic.
   - Message content is *f_i*. Use *N*=5.
-- Node loop frequency is 50Hz.
+- Node loop frequency is 100Hz.
 - Implementation in C++.
+
+**Bonus Point** (optional)  
+Store *N* in parameter server then make the Filter Node load this parameter at runtime so users don't have to re-compile the program everytime they change the value of *N*.
 
 ## Deliverables
 1. Fork this repository into your GitLab group.
