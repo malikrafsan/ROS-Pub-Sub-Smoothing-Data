@@ -1,1 +1,1 @@
-float64 sensor_measurement
+float64 data
