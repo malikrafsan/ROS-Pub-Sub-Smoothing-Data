@@ -51,6 +51,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   sensor_measurement.msg
+  sensor_measurement_filtered.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -212,4 +213,4 @@ catkin_install_python(PROGRAMS scripts/sensor_driver_node.py
 
 add_executable(filter_node src/filter_node.cpp)
 target_link_libraries(filter_node ${catkin_LIBRARIES})
-add_dependencies(filter_node beginner_tutorials_filter_node_cpp)
+add_dependencies(filter_node moving_average_filter_filter_node_cpp)
