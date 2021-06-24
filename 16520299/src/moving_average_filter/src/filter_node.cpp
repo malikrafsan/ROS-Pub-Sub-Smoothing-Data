@@ -1,10 +1,7 @@
 #include "ros/ros.h"
 #include <std_msgs/Float64.h>
 #include <exception>
-//#include <vector>
 #include <queue>
-#include <sstream>
-
 
 class FilterNode{
   private:
@@ -31,21 +28,11 @@ class FilterNode{
         ROS_INFO("PARAMETER '/size_N' HAS TO BE DEFINE FIRST");
         throw std::exception();
       }
-      ROS_INFO("PARAM: [%d]", N);
-      //isiArr();
+      ROS_INFO("Size N: [%d]\n", N);
     }
-
-    /*
-    void isiArr() {
-      for (int i=0;i<N;i++){
-        arr[i] = 0;
-      }
-    }
-    */
 
     double filterData(double rawData) {
       sumArr = sumArr - arr.front() + rawData;
-      //arr[count % N] = rawData;
       arr.pop(); 
       arr.push(rawData);
       return (sumArr / N);
@@ -56,34 +43,26 @@ class FilterNode{
       ROS_INFO("I heard: [%lf]", msg->data);
       if (filtering) {
         datum = filterData(msg->data);
-        ROS_INFO("Filtered: [%g]" ,datum);
+        ROS_INFO("Filtered: [%lf]" ,datum);
+        publishMsg(datum);
       } else {
         sumArr += msg->data;
         arr.push(msg->data);
         if (count == N) {
-          ROS_INFO("Filtered: [%g]", (sumArr / N));
+          ROS_INFO("Filtered: [%lf]", (sumArr / N));
+          publishMsg(sumArr / N);
           filtering = true;
         } else {
           ROS_INFO("Still waiting enough data");
         }
       }
       ROS_INFO("Count: %d\n", count);
-      showq(arr);
-      
+    }
+
+    void publishMsg(double datum) {
       sensor_measurement_filtered.data = datum;
       pub.publish(sensor_measurement_filtered);
     }
-
-    void showq(std::queue<double> gq) {
-        std::queue<double> g = gq;
-        while (!g.empty()) {
-            //cout << '\t' << g.front();
-            ROS_INFO("%g \t",g.front());
-            g.pop();
-        }
-        ROS_INFO("\n");
-    }
-
 };
 
 int main(int argc, char **argv) {
@@ -94,10 +73,7 @@ int main(int argc, char **argv) {
   FilterNode node = FilterNode(&n);
 
   ros::Rate loop_rate(0.2);
-  while (ros::ok()){
-		ros::spinOnce();
-		loop_rate.sleep();
-  }
+  ros::spin();
 
   return 0;
 }

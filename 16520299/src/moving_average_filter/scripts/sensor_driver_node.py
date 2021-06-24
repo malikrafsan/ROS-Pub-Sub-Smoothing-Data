@@ -14,7 +14,7 @@ def sensor_driver_node():
     i = 0
     while not rospy.is_shutdown():
         g = np.random.normal(mu, sigma)
-        z_i = math.sin(i * math.pi / 180) + g
+        z_i = i #math.sin(i * math.pi / 180) + g
         rospy.loginfo("Sensor measurement: " + str(z_i))
         pub.publish(z_i)
         rate.sleep()
