@@ -7,24 +7,33 @@ void sayHello();
 class FilterNode{
   private:
     // ATTRIBUTE
-    int N;
-    int count = 0;
-    double datum;
-    double sumArr = 0;
-    bool filtering = false;
-    std::queue<double> arr;
-    std_msgs::Float64 sensor_measurement_filtered;
-    ros::Publisher pub;
-    ros::Subscriber sub; 
+    int N;                                              // Size of data which are averaged
+    int count = 0;                                      // Messages counter
+    double datum;                                       // Filtered data
+    double sumArr = 0;                                  // Sum of data value in the queue
+    bool filtering = false;                             // Boolean flag for switching case to start filtering data
+    std::queue<double> arr;                             // Queue data structure
+    std_msgs::Float64 sensor_measurement_filtered;      // Message that has been filtered
+    ros::Publisher pub;                                 // Node's publisher object
+    ros::Subscriber sub;                                // Node's subscriber object
 
   public:
     // CONSTRUCTOR
     FilterNode(ros::NodeHandle *n);
+    // Construct FilterNode object
 
     // METHODS
     double filterData(double rawData);
+    // Return value of the message that has been filtered using moving average
+
     void chatterCallback(const std_msgs::Float64::ConstPtr& msg);
+    // I.S. Subscribed message has been catched
+    // F.S. Filtered message has been published and informations 
+    // has been printed on the screen
+
     void publishMsg(double datum);
+    // I.S. Filtered data is defined
+    // F.S. Filtered data has been published
 
 };
 #endif
