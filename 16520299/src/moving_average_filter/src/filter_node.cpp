@@ -2,15 +2,31 @@
 #include <std_msgs/Float64.h>
 #include <typeinfo>
 
+const int N = 5;
 int count = 0;
 double datum;
+double arr[N];
+double sumArr = 0;
 std_msgs::Float64 sensor_measurement_filtered;
+
+void isiArr() {
+  for (int i=0;i<N;i++){
+    arr[i] = 0;
+  }
+}
+
+double filterData(double rawData) {
+  sumArr = sumArr - arr[count % N] + rawData;
+  arr[count % N] = rawData;
+  return (sumArr / N);
+}
 
 void chatterCallback(const std_msgs::Float64::ConstPtr& msg) {
   ROS_INFO("I heard: [%f]", msg->data);
-  datum = (msg->data * 10) * (msg->data * 10);
+  datum = filterData(msg->data);
   ROS_INFO("added: [%f]" ,datum);
   ROS_INFO("count: %d", count);
+  ++count;
 }
 
 int main(int argc, char **argv) {
@@ -20,14 +36,10 @@ int main(int argc, char **argv) {
 
   ros::Subscriber sub = n.subscribe("sensor_measurement", 25, chatterCallback);
   ros::Publisher pub = n.advertise<std_msgs::Float64>("sensor_measurement_filtered", 25);
-  
-  //std::cout << "Main program" << datum << std::endl;
 
-  //ros::spin();
+	ros::Rate loop_rate(0.2);
 
-	ros::Rate loop_rate(100);
-
-	ros::spinOnce();
+  isiArr();
 
   while (ros::ok()){
 
@@ -37,7 +49,6 @@ int main(int argc, char **argv) {
 
 		ros::spinOnce();
 		loop_rate.sleep();
-		++count;
   }
 
 

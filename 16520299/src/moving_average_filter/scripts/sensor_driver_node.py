@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 import rospy
 from std_msgs.msg import Float64
-
+ 
 import numpy as np
 import math
 
 def sensor_driver_node():
     pub = rospy.Publisher('sensor_measurement', Float64, queue_size=25)
     rospy.init_node('sensor_driver_node')
-    rate = rospy.Rate(100) # 100hz
+    rate = rospy.Rate(0.2)
 
     mu, sigma = 0.0, 0.05
     i = 0
