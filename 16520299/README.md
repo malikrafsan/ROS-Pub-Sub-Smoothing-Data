@@ -65,6 +65,7 @@ To illustrate:
     ```
     catkin_make
     ```
+    If you get error, see [Note](#note)
 4. Run ROS package
     - Open new terminal (terminal1) and run
         ```
