@@ -96,5 +96,7 @@ void FilterNode::chatterCallback(const std_msgs::Float64::ConstPtr& msg) {
 
 void FilterNode::publishMsg(double datum) {
   sensor_measurement_filtered.data = datum;
+
+  // Publish filtered message
   pub.publish(sensor_measurement_filtered);
 }
