@@ -30,6 +30,7 @@ def sensor_driver_node():
 
         # Print message on the screen
         rospy.loginfo("Sensor measurement: " + str(z_i))
+        rospy.loginfo("Count: " + str(i) + "\n")
         
         # Publish the message
         pub.publish(z_i)
