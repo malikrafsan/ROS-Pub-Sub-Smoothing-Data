@@ -2,8 +2,6 @@
 #define FILTER_NODE_H
 #include <ros/ros.h>
 
-void sayHello();
-
 class FilterNode{
   private:
     // ATTRIBUTE
