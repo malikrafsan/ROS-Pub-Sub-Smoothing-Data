@@ -1,4 +1,15 @@
-# Day 1 Bonus Assignment Specification
+# Day 1 Bonus Assignment Internship2 Dagozilla
+
+## Table of Content
+  - [Table of Content](#table-of-content)
+  - [Description](#description)
+  - [Implementation](#implementation)
+  - [How to Run](#how-to-run)
+    - [Prerequisite](#prerequisite)
+    - [Running Steps](#running-steps)
+    - [Note](#note)
+  - [Author](#author)
+  - [References](#references)
 
 ## Description
 Measurements acquired by sensors can sometimes be noisy. Using this raw data directly for computation can cause unwanted robot behaviour. To alleviate this problem, some filters might be of use.
@@ -23,45 +34,82 @@ To illustrate:
   <img src="images/image3.png" alt="image3"/>
 </p>
 
-## Your Task
+## Implementation
+- Here I implement 2 Node, Sensor Driver Node (publisher) and Filter Node (publisher and subscriber). Both of them are using Float64 message, where Sensor Driver Node publish messages (raw data) to `/sensor_measurement` topic and Filter Node subscribe to that topic. Filter Node then filter data that it gets and publish messages (filtered data) to `/sensor_measurement_filtered` topic. 
 
-Create 2 ROS nodes, one that acts as a sensor driver and another that is the filter. Computation graph will look something like this:
+- Sensor Driver Node publish message that is sensor measurement z_i where value of z_i is given by the formula: `z_i = sin(i * pi / 180) + g`, where g is a random number with Gaussian distribution of mean=0.0 and sigma=0.05. This node loop frequency is 100 Hz and implemented in Python
 
-<p align="center">
-  <img src="images/image4.png" alt="image4"/>
-</p>
+- Filter Node publish messages whose content is f_i (as explained above). Here I use N=5 as default and we can change it using parameter server. This node loop frequency is 100 Hz and implemented in C++.
 
-The details of each node are as follows:
+    ### Header File
+    - Here I also implement [my own header file](src/moving_average_filter/include/moving_average_filter/filter_node.h) so that my codes are neater. My header file contains my class attributes and methods declaration also their brief functionality explanations.
 
-### Sensor Driver Node
-- Publishes message of type float64 to `/sensor_measurement` topic.
-  - Message content is sensor measurement *z_i*.
-  - Value of *z_i* is given by the formula: `z_i = sin(i * pi / 180) + g`, where `g` is a random number with Gaussian distribution of mean=0.0 and sigma=0.05.
-- Node loop frequency is 100Hz.
-- Implementation in Python.
+    ### Computation Graph
+    - Here the computation graph of my ROS package
+    ![RQT Graph](images/rqt_graph.png)
 
-### Filter Node
-- Subscribes to `/sensor_measurement` topic.
-- Publishes message of type float64 to `/sensor_measurement/filtered` topic.
-  - Message content is *f_i*. Use *N*=5.
-- Node loop frequency is 100Hz.
-- Implementation in C++.
+## How to Run
+### Prerequisite
+- Already installed ROS (here I use ROS noetic)
 
-**Bonus Point** (optional)  
-Store *N* in parameter server then make the Filter Node load this parameter at runtime so users don't have to re-compile the program everytime they change the value of *N*.
+### Running Steps
+1. Download or clone this repository
+    ```sh
+    git clone https://gitlab.com/dagozilla/academy/2021-internship2/16520299/day-1-bonus.git
+    ```
+2. Change directory to `16520299` folder
+    ```sh
+    cd day-1-bonus/16520299
+    ```
+3. Compile ROS package
+    ```
+    catkin_make
+    ```
+    If you get error, see [Note](#note)
+4. Run ROS package
+    - Open new terminal (terminal1) and run
+        ```
+        roscore
+        ```
+    - Open new terminal again (terminal2) and run Filter Node
+        ```
+        source devel/setup.bash
+        rosrun moving_average_filter filter_node
+        ```
+    - Open new terminal again (terminal3) and run Sensor Driver Node
+        ```
+        source devel/setup.bash
+        rosrun moving_average_filter sensor_driver_node.py
+        ```
+    ### Parameter Server
+    - We can define our N (number of data that we averaged) by using parameter server. Before running Filter Node, run this command
+        ```
+        rosparam set /size_N <int_number>
+        ```
+    ### Rostopic
+    - We can see message published by Filter Node by subscribing to `/sensor_measurement_filtered` topic. Open new terminal (terminal4) and run this command
+        ```
+        rostopic echo /sensor_measurement_filtered
+        ```
+    
+    ### Computation Graph
+    - Prerequisite : already installed rqt package
+    - Open new terminal (terminal5) and run this command
+        ```
+        rqt_graph
+        ```
 
-## Deliverables
-1. Fork this repository into your GitLab group.
-2. Create a `development` branch in the forked repository.
-3. Create a folder with your TPB NIM as the folder name. Make this folder your ROS workspace (i.e. your ROS workspace will be named 16520xxx).
-4. Implement your solution in this workspace.
-5. Commit your work (only commit the `src` folder in your workspace. **Do not commit `build` and `devel` folders**).
-6. Create a README.md inside your workspace to explain your work and how to run it.
-7. Submit your work after the due date by creating a merge request (MR) to [this repository's master branch](https://gitlab.com/dagozilla/academy/2021-internship2/assignment/day-1-bonus).
-8. Cite references you used in this assignment.
+### Note
+- Previously I often tested my program at 0.2Hz rate and I often (only) missed the first message. This is said to be expected behavior (see [this](https://answers.ros.org/question/287548/ros_tutorials-roscpp-talkerlistener-loses-first-message-or-two/?answer=287676#post-id-287676)). But when I try with 100Hz rate, I miss the first 15 messages. I don't know why this happens and maybe it's related to the looping rate.
 
-## Assessment Criteria
-1. Correctness of the implementation.
-2. Code cleanliness.
-3. Documentations.
-4. Git best practices.
+- In case when compiling ROS package there is error "*The dependency target "moving_average_filter_filter_node_cpp" of target "filter_node" does not exist.*", just run `catkin_make` again. I don't know why but it works fine after that.
+
+## Author
+- Malik Akbar Hashemi Rafsanjani
+
+## References
+- ["ROS Wiki"](http://wiki.ros.org/). *ROS Community*.  Retrieved 24 June 2021.
+- ["ROS Overview & Tutorial"](https://docs.google.com/presentation/d/1mbuUwuboY-xZHHEYSMAoZwKoJgCuIzn2RNmxc9QfChs/edit#slide=id.ge0b649f60e_0_30). *Dagozilla*. Retrieved 24 June 2021.
+- ["ros_tutorials roscpp talker/listener loses first message or two"](https://answers.ros.org/question/287548/ros_tutorials-roscpp-talkerlistener-loses-first-message-or-two/?answer=287676#post-id-287676). *ROS answer*. Retrieved 24 June 2021.
+- ["OOP with ROS in Cpp"](https://roboticsbackend.com/oop-with-ros-in-cpp/). *The Robotics Back-End*. Retrieved 24 June 2021.
+- ["[ROS] Include a Cpp header from another package"](https://roboticsbackend.com/ros-include-cpp-header-from-another-package/). *The Robotics Back-End*. Retrieved 24 June 2021.
